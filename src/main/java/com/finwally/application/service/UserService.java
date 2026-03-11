@@ -24,4 +24,9 @@ public class UserService {
     public void save(UserEntity userEntity) {
         userJpaRepository.save(userEntity);
     }
+
+    @Transactional
+    public boolean existsByEmailNormalized(String email) {
+        return userJpaRepository.existsByEmailNormalized(email);
+    }
 }

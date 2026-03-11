@@ -10,9 +10,7 @@ export default function LoginPage() {
       <div className="relative z-20 w-full max-w-sm">
         <div className="flex flex-col items-center mb-8">
           <div className="flex items-center gap-2 mb-8">
-            <div className="w-8 h-8 bg-emerald-600 rounded-md flex items-center justify-center">
-              <div className="w-5 h-4 bg-yellow-400 rounded-sm transform -rotate-12"></div>
-            </div>
+            <img src="/logo.png" alt="FinWally Logo" className="w-[60px] h-[60px] object-contain" />
             <span className="text-2xl font-bold text-slate-800 tracking-tight">finwally</span>
           </div>
 

@@ -19,6 +19,9 @@ export const metadata: Metadata = {
     template: "%s | FinWally",
   },
   description: "Manage your finances easily",
+  icons: {
+    icon: "/logo.png",
+  },
 };
 
 export default function RootLayout({

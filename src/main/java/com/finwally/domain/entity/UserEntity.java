@@ -40,8 +40,8 @@ public class UserEntity {
     @Column(name = "avatar_url")
     private String avatarUrl;
 
-    @Column(name = "default_locale", nullable = false)
-    private String defaultLocale;
+    @Column(name = "locale", nullable = false)
+    private String locale;
 
     @Column(name = "timezone", nullable = false)
     private String timezone;

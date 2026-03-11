@@ -1,8 +1,56 @@
+"use client";
+
 import Link from "next/link";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { TopDecorations, BottomDecorations } from "@/components/layout/auth-decorations";
 
 export default function SignupPage() {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setLoading(true);
+
+    try {
+      const response = await fetch("/api/v1/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          password,
+          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setSuccess(true);
+        setTimeout(() => {
+          router.push("/login");
+        }, 2000);
+      } else {
+        setError(data.message || "Registration failed");
+      }
+    } catch (err) {
+      setError("Something went wrong. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="relative flex min-h-screen flex-col items-center bg-white px-6 pt-12 pb-12 lg:px-8">
       <TopDecorations />
@@ -10,9 +58,7 @@ export default function SignupPage() {
       <div className="relative z-20 w-full max-w-sm">
         <div className="flex flex-col items-center mb-8">
           <div className="flex items-center gap-2 mb-8">
-            <div className="w-8 h-8 bg-emerald-600 rounded-md flex items-center justify-center">
-              <div className="w-5 h-4 bg-yellow-400 rounded-sm transform -rotate-12"></div>
-            </div>
+            <img src="/logo.png" alt="FinWally Logo" className="w-[60px] h-[60px] object-contain" />
             <span className="text-2xl font-bold text-slate-800 tracking-tight">finwally</span>
           </div>
 
@@ -25,7 +71,18 @@ export default function SignupPage() {
         </div>
 
         <div className="bg-white/80 backdrop-blur-sm p-8 rounded-2xl shadow-xl border border-slate-100">
-          <form className="space-y-5" action="#" method="POST">
+          {error && (
+            <div className="mb-4 p-3 rounded-lg bg-red-50 text-red-600 text-sm border border-red-100">
+              {error}
+            </div>
+          )}
+          {success && (
+            <div className="mb-4 p-3 rounded-lg bg-emerald-50 text-emerald-600 text-sm border border-emerald-100">
+              Registration successful! Redirecting to login...
+            </div>
+          )}
+
+          <form className="space-y-5" onSubmit={handleSubmit}>
             <div>
               <label htmlFor="name" className="block text-sm font-medium text-slate-700">
                 Full Name
@@ -37,6 +94,8 @@ export default function SignupPage() {
                   type="text"
                   placeholder="John Doe"
                   required
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
                   className="block w-full rounded-lg border-slate-200 bg-slate-50/50 py-2.5 px-4 text-slate-900 shadow-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm"
                 />
               </div>
@@ -58,6 +117,8 @@ export default function SignupPage() {
                   type="email"
                   placeholder="email@example.com"
                   required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   className="block w-full pl-10 rounded-lg border-slate-200 bg-slate-50/50 py-2.5 text-slate-900 shadow-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm"
                 />
               </div>
@@ -74,13 +135,19 @@ export default function SignupPage() {
                   type="password"
                   placeholder="••••••••••"
                   required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   className="block w-full pl-4 rounded-lg border-slate-200 bg-slate-50/50 py-2.5 text-slate-900 shadow-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm"
                 />
               </div>
             </div>
 
-            <Button type="submit" className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 rounded-lg shadow-md transition duration-200">
-              Sign Up
+            <Button 
+              type="submit" 
+              disabled={loading || success}
+              className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 rounded-lg shadow-md transition duration-200 disabled:opacity-50"
+            >
+              {loading ? "Signing Up..." : "Sign Up"}
             </Button>
             
             <p className="text-center text-sm text-slate-500">
