@@ -63,4 +63,9 @@ public class UserEntity {
         createdAt = OffsetDateTime.now();
         updatedAt = createdAt;
     }
+
+    @PreUpdate
+    private void preUpdate() {
+        updatedAt = OffsetDateTime.now();
+    }
 }

@@ -3,11 +3,13 @@ package com.finwally.application.service;
 import com.finwally.domain.entity.UserIdentityEntity;
 import com.finwally.infrastructure.persistence.repository.UserIdentityJpaRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserIdentityService {
@@ -21,6 +23,7 @@ public class UserIdentityService {
 
     @Transactional
     public UserIdentityEntity save(UserIdentityEntity userIdentity) {
+        log.debug("Saving user identity for provider: {}", userIdentity.getProvider());
         return userIdentityJpaRepository.save(userIdentity);
     }
 }
