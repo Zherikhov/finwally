@@ -5,8 +5,10 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { TopDecorations, BottomDecorations } from "@/components/layout/auth-decorations";
+import { useAuth } from "@/lib/auth-context";
 
 export default function SignupPage() {
+  const { login } = useAuth();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -38,9 +40,22 @@ export default function SignupPage() {
 
       if (response.ok) {
         setSuccess(true);
-        setTimeout(() => {
+        // After successful registration, log in automatically
+        try {
+          const loginResponse = await fetch("/api/v1/auth/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password }),
+          });
+          const loginData = await loginResponse.json();
+          if (loginResponse.ok) {
+            login(loginData.user);
+          } else {
+            router.push("/login");
+          }
+        } catch (e) {
           router.push("/login");
-        }, 2000);
+        }
       } else {
         setError(data.message || "Registration failed");
       }

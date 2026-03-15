@@ -1,5 +1,6 @@
 package com.finwally.api.auth;
 
+import com.finwally.domain.entity.UserEntity;
 import com.finwally.application.service.UserService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
@@ -21,9 +22,28 @@ public class AuthController {
         this.users = users;
     }
 
-    @GetMapping("/login")
-    public String login() {
-        return "login";
+
+    @PostMapping(path = "/login", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest req) {
+        try {
+            UserEntity user = users.authenticate(req.email(), req.password());
+            return ResponseEntity.ok(Map.of(
+                    "message", "Login successful",
+                    "user", Map.of(
+                            "id", user.getId(),
+                            "email", user.getEmail(),
+                            "displayName", user.getDisplayName()
+                    )
+            ));
+        } catch (IllegalArgumentException e) {
+            log.warn("Login failed: {}", e.getMessage());
+            return ResponseEntity.status(401)
+                    .body(Map.of("message", e.getMessage()));
+        } catch (Exception e) {
+            log.error("Unexpected login error", e);
+            return ResponseEntity.internalServerError()
+                    .body(Map.of("message", "An internal error occurred during login"));
+        }
     }
 
 
@@ -53,6 +73,12 @@ public class AuthController {
             @Email @NotBlank String email,
             @NotBlank String password,
             String timezone
+    ) {
+    }
+
+    public record LoginRequest(
+            @Email @NotBlank String email,
+            @NotBlank String password
     ) {
     }
 

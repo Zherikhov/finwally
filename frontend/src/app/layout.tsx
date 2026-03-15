@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { AuthProvider } from "@/lib/auth-context";
 import "./globals.css";
 import { Toolbar } from "@/features/toolbar/toolbar";
 
@@ -31,9 +32,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <Toolbar />
-        <main>{children}</main>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#F8F9FB]`}>
+        <AuthProvider>
+          <Toolbar />
+          <main>{children}</main>
+        </AuthProvider>
       </body>
     </html>
   );

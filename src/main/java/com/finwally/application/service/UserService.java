@@ -36,6 +36,23 @@ public class UserService {
         return userJpaRepository.existsByEmailNormalized(email);
     }
 
+    @Transactional(readOnly = true)
+    public Optional<UserEntity> findByEmail(String email) {
+        return userJpaRepository.findByEmailNormalized(email.trim().toLowerCase());
+    }
+
+    @Transactional(readOnly = true)
+    public UserEntity authenticate(String email, String rawPassword) {
+        UserEntity user = findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid email or password"));
+
+        if (!passwordEncoder.matches(rawPassword, user.getPasswordHash())) {
+            throw new IllegalArgumentException("Invalid email or password");
+        }
+
+        return user;
+    }
+
     @Transactional
     public void createUser(String email, String rawPassword, String displayName, String timezone) {
         log.info("Creating new user with email: {}", email);

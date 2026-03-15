@@ -1,8 +1,48 @@
+'use client';
+
+import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { TopDecorations, BottomDecorations } from "@/components/layout/auth-decorations";
+import { useAuth } from "@/lib/auth-context";
 
 export default function LoginPage() {
+  const { login } = useAuth();
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setError(null);
+    setIsLoading(true);
+
+    const formData = new FormData(event.currentTarget);
+    const email = formData.get("email");
+    const password = formData.get("password");
+
+    try {
+      const response = await fetch("/api/v1/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        login(data.user);
+      } else {
+        setError(data.message || "Login failed");
+      }
+    } catch (err) {
+      setError("An error occurred. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   return (
     <div className="relative flex min-h-screen flex-col items-center bg-white px-6 pt-12 pb-12 lg:px-8">
       <TopDecorations />
@@ -23,7 +63,12 @@ export default function LoginPage() {
         </div>
 
         <div className="bg-white/80 backdrop-blur-sm p-8 rounded-2xl shadow-xl border border-slate-100">
-          <form className="space-y-5" action="#" method="POST">
+          <form className="space-y-5" onSubmit={handleSubmit}>
+            {error && (
+              <div className="p-3 text-sm text-red-500 bg-red-50 border border-red-100 rounded-lg">
+                {error}
+              </div>
+            )}
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-slate-700">
                 Email
@@ -86,8 +131,12 @@ export default function LoginPage() {
               </div>
             </div>
 
-            <Button type="submit" className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 rounded-lg shadow-md transition duration-200">
-              Log In
+            <Button 
+              type="submit" 
+              disabled={isLoading}
+              className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 rounded-lg shadow-md transition duration-200 disabled:opacity-50"
+            >
+              {isLoading ? "Logging in..." : "Log In"}
             </Button>
             
             <p className="text-center text-sm text-slate-500">

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -13,21 +14,31 @@ const navItems = [
 ] as const;
 
 export function NavLinks() {
+  const pathname = usePathname();
+  const isHomePage = pathname === "/home";
+
   return (
     <NavigationMenu>
       <NavigationMenuList className="gap-2">
-        {navItems.map((item) => (
-          <NavigationMenuItem key={item.href}>
-            <NavigationMenuLink
-              asChild
-              className="bg-transparent px-4 text-muted-foreground hover:text-foreground"
-            >
-              <Link href={item.href}>
-                {item.label}
-              </Link>
-            </NavigationMenuLink>
-          </NavigationMenuItem>
-        ))}
+        {navItems
+          .filter((item) => {
+            if (isHomePage && (item.label === "About" || item.label === "FAQ" || item.label === "Features")) {
+              return false;
+            }
+            return true;
+          })
+          .map((item) => (
+            <NavigationMenuItem key={item.href}>
+              <NavigationMenuLink
+                asChild
+                className="bg-transparent px-4 text-muted-foreground hover:text-foreground"
+              >
+                <Link href={item.href}>
+                  {item.label}
+                </Link>
+              </NavigationMenuLink>
+            </NavigationMenuItem>
+          ))}
       </NavigationMenuList>
     </NavigationMenu>
   );
