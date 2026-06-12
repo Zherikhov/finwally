@@ -8,12 +8,12 @@
         <version>4.0.6</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com</groupId>
-    <artifactId>finwally</artifactId>
+    <groupId>com.myeasybudget</groupId>
+    <artifactId>myeasybudget</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>finwally</name>
-    <description>finwally</description>
-    <url/>
+    <name>myeasybudget</name>
+    <description>myeasybudget</description>
+    <url>https://my-easy-budget.com</url>
     <licenses>
         <license/>
     </licenses>

@@ -1,6 +1,8 @@
-# Finwally
+# myeasybudget
 
 Spring Boot backend prepared for Docker deployment with PostgreSQL.
+
+Production domain: https://my-easy-budget.com
 
 ## Run with Docker
 
@@ -17,9 +19,9 @@ Backend:
 
 PostgreSQL defaults:
 
-- Database: `finwally`
-- User: `finwally_user`
-- Password: `finwally_password`
+- Database: `myeasybudget`
+- User: `myeasybudget_user`
+- Password: `myeasybudget_password`
 - Host port: `5432`
 
 The frontend is not included in the Compose stack yet because its technology has not been selected.
