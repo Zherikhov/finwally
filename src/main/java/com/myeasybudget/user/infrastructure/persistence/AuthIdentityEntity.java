@@ -45,4 +45,7 @@ public class AuthIdentityEntity extends BaseTimestampedEntity {
 
     @Column(name = "provider_email_verified", nullable = false)
     private Boolean providerEmailVerified = false;
+
+    @Column(name = "password_hash")
+    private String passwordHash;
 }
